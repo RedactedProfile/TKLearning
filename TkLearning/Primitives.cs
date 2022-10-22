@@ -14,9 +14,9 @@ namespace TkLearning.Primitives
         public List<Vector2> TexCoords = new List<Vector2>();
         public List<uint> Indices = new List<uint>();
         
-        public float[] verts = { };
-        public float[] texcoords = { };
-        public uint[] indices = { };
+        public float[] verts = Array.Empty<float>();
+        public float[] texcoords = Array.Empty<float>();
+        public uint[] indices = Array.Empty<uint>();
 
         public int DrawCount = 0;
 
@@ -65,6 +65,8 @@ void main()
             ShaderProgram = new Shader(vertShader, fragShader);
 
             ShaderProgram.Use();
+
+            Console.WriteLine("Primitive Installed.");
         }
 
         public void Draw()
