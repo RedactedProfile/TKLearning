@@ -10,16 +10,10 @@ namespace TkLearning.Primitives
 {
     public abstract class Primitive
     {
-        public List<Vector3> Verts = new List<Vector3>();
-        public List<Vector2> TexCoords = new List<Vector2>();
-        public List<uint> Indices = new List<uint>();
+        public Vector3[] Verts = Array.Empty<Vector3>();
+        public Vector2[] TexCoords = Array.Empty<Vector2>();
+        public uint[] Indices = Array.Empty<uint>();
         
-        public float[] verts = Array.Empty<float>();
-        public float[] texcoords = Array.Empty<float>();
-        public uint[] indices = Array.Empty<uint>();
-
-        public int DrawCount = 0;
-
         int VertexBufferObject;
         int VertexArrayObject;
         int ElementBufferObject;
@@ -31,7 +25,7 @@ namespace TkLearning.Primitives
         {
             VertexBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, verts.Length * sizeof(float), verts, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, Verts.Length * Vector3.SizeInBytes, Verts, BufferUsageHint.StaticDraw);
 
             VertexArrayObject = GL.GenVertexArray();
             GL.BindVertexArray(VertexArrayObject);
@@ -41,7 +35,7 @@ namespace TkLearning.Primitives
             // ElementBuffer binding requires an actively bound VAO 
             ElementBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, Indices.Length * sizeof(uint), Indices, BufferUsageHint.StaticDraw);
 
             string vertShader = @"
 #version 330 core
@@ -73,7 +67,7 @@ void main()
         {
             ShaderProgram.Use();
             GL.BindVertexArray(VertexArrayObject);
-            GL.DrawElements(PrimitiveType.TriangleFan, indices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.TriangleFan, Indices.Length, DrawElementsType.UnsignedInt, 0);
         }
     }
 
@@ -81,16 +75,14 @@ void main()
     {
         public Triangle() : base()
         {
-            DrawCount = 3;
-
-            verts = new float[]
+            Verts = new Vector3[]
             {
-                -0.5f, -0.5f, 0.0f, // BL
-                0.5f, -0.5f, 0.0f, // BR
-                0.0f, 0.5f, 0.0f, // T
+                (-0.5f, -0.5f, 0.0f), // BL
+                (0.5f, -0.5f, 0.0f), // BR
+                (0.0f, 0.5f, 0.0f), // T
             };
 
-            indices = new uint[]
+            Indices = new uint[]
             {
                 0, 1, 2
             };
@@ -101,19 +93,17 @@ void main()
     {
         public Quad() : base()
         {
-            DrawCount = 4;
-
-            verts = new float[]
+            Verts = new Vector3[]
             {
-                0.5f, 0.5f, 0.0f,   // TR
-                0.5f, -0.5f, 0.0f,  // BR
-                -0.5f, -0.5f, 0.0f, // BL
-                -0.5f, 0.5f, 0.0f   // TL
+                (0.5f, 0.5f, 0.0f),   // TR
+                (0.5f, -0.5f, 0.0f),  // BR
+                (-0.5f, -0.5f, 0.0f), // BL
+                (-0.5f, 0.5f, 0.0f)   // TL
             };
 
-            indices = new uint[]
+            Indices = new uint[]
             {
-                0, 1, 3, 
+                0, 1, 3,
                 1, 2, 3
             };
         }
