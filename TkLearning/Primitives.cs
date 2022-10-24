@@ -15,6 +15,8 @@ namespace TkLearning.Primitives
         public uint[] Indices = Array.Empty<uint>();
         
         int VertexBufferObject;
+        int UVBufferObject;
+
         int VertexArrayObject;
         int ElementBufferObject;
         Shader ShaderProgram;
@@ -29,8 +31,15 @@ namespace TkLearning.Primitives
 
             VertexArrayObject = GL.GenVertexArray();
             GL.BindVertexArray(VertexArrayObject);
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, Vector3.SizeInBytes, 0);
             GL.EnableVertexAttribArray(0);
+
+            UVBufferObject = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, UVBufferObject);
+            GL.BufferData(BufferTarget.ArrayBuffer, TexCoords.Length * Vector2.SizeInBytes, TexCoords, BufferUsageHint.StaticDraw);
+
+            GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, Vector2.SizeInBytes, 0);
+            GL.EnableVertexAttribArray(1);
 
             // ElementBuffer binding requires an actively bound VAO 
             ElementBufferObject = GL.GenBuffer();
@@ -40,19 +49,29 @@ namespace TkLearning.Primitives
             string vertShader = @"
 #version 330 core
 layout (location = 0) in vec3 aPosition;
+layout (location = 1) in vec2 aTexCoord;
+
+out vec2 texCoord;
 
 void main()
 {
+    texCoord = aTexCoord;
     gl_Position = vec4(aPosition, 1.0);
 }
 ";
             string fragShader = @"
 #version 330 core
+
 out vec4 FragColor;
+
+in vec2 texCoord;
+
+uniform sampler2D texture0;
 
 void main()
 {
-    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+    // FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+    FragColor = texture(texture0, texCoord);
 }
 ";
 
@@ -82,6 +101,13 @@ void main()
                 (0.0f, 0.5f, 0.0f), // T
             };
 
+            TexCoords = new Vector2[]
+            {
+                (0.0f, 0.0f), // Lower Left
+                (1.0f, 0.0f), // Lower Right
+                (0.5f, 1.0f), // Top Center
+            };
+
             Indices = new uint[]
             {
                 0, 1, 2
@@ -99,6 +125,14 @@ void main()
                 (0.5f, -0.5f, 0.0f),  // BR
                 (-0.5f, -0.5f, 0.0f), // BL
                 (-0.5f, 0.5f, 0.0f)   // TL
+            };
+
+            TexCoords = new Vector2[]
+            {
+                (1.0f, 1.0f), // TR
+                (1.0f, 0.0f), // BR
+                (0.0f, 0.0f), // BL
+                (0.0f, 1.0f), // TL
             };
 
             Indices = new uint[]
