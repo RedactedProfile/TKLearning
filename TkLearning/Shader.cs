@@ -6,7 +6,7 @@ namespace TkLearning
 {
     public class Shader : IDisposable
     {
-        int Handle;
+        public int Handle;
         string VertexShaderSource;
         string FragmentShaderSource;
 

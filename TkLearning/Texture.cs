@@ -7,7 +7,7 @@ namespace TkLearning
 {
     public class Texture : IDisposable
     {
-        int Handle;
+        public int Handle;
         
         private bool disposedValue = false;
 

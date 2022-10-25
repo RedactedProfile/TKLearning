@@ -24,6 +24,9 @@ namespace TkLearning.Primitives
         Shader ShaderProgram;
         Texture ColorMap;
 
+        Matrix4 rotation;
+        Matrix4 scale;
+        Matrix4 trans;
 
 
         public Primitive() { }
@@ -58,10 +61,12 @@ layout (location = 1) in vec2 aTexCoord;
 
 out vec2 texCoord;
 
+uniform mat4 transform;
+
 void main()
 {
     texCoord = aTexCoord;
-    gl_Position = vec4(aPosition, 1.0);
+    gl_Position = vec4(aPosition, 1.0) * transform;
 }
 ";
             string fragShader = @"
@@ -89,7 +94,20 @@ void main()
                 ColorMap = new Texture(ColorMapPath);
             }
 
+            rotation = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0));
+            scale = Matrix4.CreateScale(1.0f, 1.0f, 1.0f);
+            trans = rotation * scale;
+
             Console.WriteLine("Primitive Installed.");
+        }
+
+        public void Update()
+        {
+            rotation = rotation * (Matrix4.CreateRotationY(MathHelper.DegreesToRadians(0.5f)) * Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.5f)));
+            //scale = Matrix4.CreateScale(0.5f, 0.5f, 0.5f);
+            //trans += Matrix4.CreateTranslation(4.0f, 0.0f, 0.0f);
+            trans = rotation * scale;
+            
         }
 
         public void Draw()
@@ -98,6 +116,10 @@ void main()
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
             ShaderProgram.Use();
+
+            int transLocation = GL.GetUniformLocation(ShaderProgram.Handle, "transform");
+            GL.UniformMatrix4(transLocation, true, ref trans);
+
             GL.BindVertexArray(VertexArrayObject);
             
             ColorMap.Use();

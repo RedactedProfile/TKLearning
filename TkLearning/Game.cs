@@ -49,6 +49,8 @@ namespace TkLearning
         {
             base.OnUpdateFrame(e);
 
+            quad.Update();
+
             KeyboardState input = KeyboardState;
             if(input.IsKeyDown(Keys.Escape))
             {
