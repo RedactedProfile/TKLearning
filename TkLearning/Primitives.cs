@@ -14,13 +14,17 @@ namespace TkLearning.Primitives
         public Vector3[] Verts = Array.Empty<Vector3>();
         public Vector2[] TexCoords = Array.Empty<Vector2>();
         public uint[] Indices = Array.Empty<uint>();
-        
+        public string ColorMapPath = "";
+
         int VertexBufferObject;
         int UVBufferObject;
 
         int VertexArrayObject;
         int ElementBufferObject;
         Shader ShaderProgram;
+        Texture ColorMap;
+
+
 
         public Primitive() { }
 
@@ -80,13 +84,24 @@ void main()
 
             ShaderProgram.Use();
 
+            if(ColorMapPath.Length > 0)
+            {
+                ColorMap = new Texture(ColorMapPath);
+            }
+
             Console.WriteLine("Primitive Installed.");
         }
 
         public void Draw()
         {
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+
             ShaderProgram.Use();
             GL.BindVertexArray(VertexArrayObject);
+            
+            ColorMap.Use();
+
             GL.DrawElements(PrimitiveType.TriangleFan, Indices.Length, DrawElementsType.UnsignedInt, 0);
         }
     }
@@ -113,6 +128,8 @@ void main()
             {
                 0, 1, 2
             };
+
+            //ColorMap = new Texture("container.jpg");
         }
     }
 
@@ -141,6 +158,8 @@ void main()
                 0, 1, 3,
                 1, 2, 3
             };
+
+            ColorMapPath = "container.jpg";
         }
     }
 

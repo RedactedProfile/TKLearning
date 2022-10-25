@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TkLearning": {
+      "commandName": "Project",
+      "workingDirectory": ".\\"
+    }
+  }
+}
