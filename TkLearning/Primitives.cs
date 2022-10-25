@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
+using StbImageSharp;
 
 namespace TkLearning.Primitives
 {
