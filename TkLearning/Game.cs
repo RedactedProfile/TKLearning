@@ -1,4 +1,5 @@
 ﻿using System;
+using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -11,6 +12,7 @@ namespace TkLearning
     /// </summary>
     public class Game : GameWindow
     {
+        ImGuiController imGuiController;
         Primitives.Quad quad = new Primitives.Quad();
 
         static public void Main()
@@ -22,11 +24,15 @@ namespace TkLearning
             
         }
 
-        public Game(int width, int height, string title) : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = (width, height), Title = title }) { }
+        public Game(int width, int height, string title) : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = (width, height), Title = title, APIVersion = new Version(4, 6) }) { }
 
         protected override void OnLoad()
         { 
             base.OnLoad();
+
+            Title += ": OGL: " + GL.GetString(StringName.Version);
+
+            imGuiController = new ImGuiController(ClientSize.X, ClientSize.Y);
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -38,9 +44,17 @@ namespace TkLearning
         {
             base.OnRenderFrame(args);
 
+            imGuiController.Update(this, (float)args.Time);
+
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             quad.Draw();
+
+            ImGui.ShowDemoWindow();
+            imGuiController.Render();
+            ImGuiController.CheckGLError("End of frame");
+
+            
 
             SwapBuffers();
         }
@@ -62,7 +76,8 @@ namespace TkLearning
         {
             base.OnResize(e);
 
-            GL.Viewport(0, 0, e.Width, e.Height);
+            GL.Viewport(0, 0, ClientSize.X, ClientSize.Y);
+            imGuiController.WindowResized(ClientSize.X, ClientSize.Y);
         }
 
         private void Exit()
