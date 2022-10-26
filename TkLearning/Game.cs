@@ -80,6 +80,20 @@ namespace TkLearning
             imGuiController.WindowResized(ClientSize.X, ClientSize.Y);
         }
 
+        protected override void OnTextInput(TextInputEventArgs e)
+        {
+            base.OnTextInput(e);
+
+            imGuiController.PressChar((char)e.Unicode);
+        }
+
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnMouseWheel(e);
+
+            imGuiController.MouseScroll(e.Offset);
+        }
+
         private void Exit()
         {
             Close();
