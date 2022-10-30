@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
 using StbImageSharp;
+using static System.Formats.Asn1.AsnWriter;
+using System.Diagnostics;
 
 namespace TkLearning.Primitives
 {
@@ -24,9 +26,10 @@ namespace TkLearning.Primitives
         Shader ShaderProgram;
         Texture ColorMap;
 
-        Matrix4 rotation;
-        Matrix4 scale;
-        Matrix4 trans;
+        public Matrix4 rotation;
+        public Matrix4 scale;
+        public Matrix4 position;
+        public Matrix4 trans;
 
 
         public Primitive() { }
@@ -96,26 +99,26 @@ void main()
 
             rotation = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0));
             scale = Matrix4.CreateScale(1.0f, 1.0f, 1.0f);
-            trans = rotation * scale;
+            position = Matrix4.CreateTranslation(0, 0, 0);
+            trans = rotation * scale * position;
 
             Console.WriteLine("Primitive Installed.");
         }
 
-        public void Update()
+        public virtual void Update(float Time)
         {
-            rotation = rotation * (Matrix4.CreateRotationY(MathHelper.DegreesToRadians(0.5f)) * Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.5f)));
-            //scale = Matrix4.CreateScale(0.5f, 0.5f, 0.5f);
-            //trans += Matrix4.CreateTranslation(4.0f, 0.0f, 0.0f);
-            trans = rotation * scale;
+            
             
         }
 
-        public void Draw()
+        public void Draw(float Time)
         {
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
             ShaderProgram.Use();
+
+            trans = ((rotation * scale) * position) * Time;
 
             int transLocation = GL.GetUniformLocation(ShaderProgram.Handle, "transform");
             GL.UniformMatrix4(transLocation, true, ref trans);
@@ -182,6 +185,18 @@ void main()
             };
 
             ColorMapPath = "container.jpg";
+        }
+
+        public override void Update(float Time)
+        {
+            base.Update(Time);
+
+            //Console.WriteLine(Time);
+
+            //rotation = rotation * (Matrix4.CreateRotationY(MathHelper.DegreesToRadians(0.5f)) * Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.5f)));
+            scale = Matrix4.CreateScale(0.5f, 0.5f, 0.5f);
+            position *= Matrix4.CreateTranslation(0.0005f, 0.0f, 0.0f);
+            //trans = ((rotation * scale) * Matrix4.CreateTranslation(0.5f, 0.0f, 0.0f) ) * Time;
         }
     }
 
