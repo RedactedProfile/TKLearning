@@ -46,12 +46,15 @@ namespace TkLearning
         {
             base.OnRenderFrame(args);
 
+            float time = (float)args.Time;
+
             imGuiController.Update(this, (float)args.Time);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            //quad.Draw();
+            //quad.Draw(time);
             cube.Draw2();
+
 
             ImGui.ShowDemoWindow();
             imGuiController.Render();
@@ -65,9 +68,11 @@ namespace TkLearning
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
+            float Time = (float)e.Time;
 
-            quad.Update();
+            quad.Update(Time);
             cube.Update();
+
 
             KeyboardState input = KeyboardState;
             if(input.IsKeyDown(Keys.Escape))
