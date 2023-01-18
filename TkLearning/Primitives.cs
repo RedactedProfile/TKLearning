@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL4;
 using StbImageSharp;
+using System.Diagnostics;
 
 namespace TkLearning.Primitives
 {
@@ -16,17 +17,17 @@ namespace TkLearning.Primitives
         public uint[] Indices = Array.Empty<uint>();
         public string ColorMapPath = "";
 
-        int VertexBufferObject;
-        int UVBufferObject;
+        public int VertexBufferObject;
+        public int UVBufferObject;
 
-        int VertexArrayObject;
-        int ElementBufferObject;
-        Shader ShaderProgram;
-        Texture ColorMap;
+        public int VertexArrayObject;
+        public int ElementBufferObject;
+        public Shader ShaderProgram;
+        public Texture ColorMap;
 
-        Matrix4 rotation;
-        Matrix4 scale;
-        Matrix4 trans;
+        public Matrix4 rotation;
+        public Matrix4 scale;
+        public Matrix4 trans;
 
 
         public Primitive() { }
@@ -192,6 +193,115 @@ void main()
 
     public class Cube : Primitive
     {
+        public Cube() : base()
+        {
+            Verts = new Vector3[]
+            {
+                (-0.5f, -0.5f, -0.5f),
+                ( 0.5f, -0.5f, -0.5f),
+                ( 0.5f,  0.5f, -0.5f),
+                ( 0.5f,  0.5f, -0.5f),
+                (-0.5f,  0.5f, -0.5f),
+                (-0.5f, -0.5f, -0.5f),
 
+                (-0.5f, -0.5f,  0.5f),
+                ( 0.5f, -0.5f,  0.5f),
+                ( 0.5f,  0.5f,  0.5f),
+                ( 0.5f,  0.5f,  0.5f),
+                (-0.5f,  0.5f,  0.5f),
+                (-0.5f, -0.5f,  0.5f),
+
+                (-0.5f,  0.5f,  0.5f),
+                (-0.5f,  0.5f, -0.5f),
+                (-0.5f, -0.5f, -0.5f),
+                (-0.5f, -0.5f, -0.5f),
+                (-0.5f, -0.5f,  0.5f),
+                (-0.5f,  0.5f,  0.5f),
+
+                ( 0.5f,  0.5f,  0.5f),
+                ( 0.5f,  0.5f, -0.5f),
+                ( 0.5f, -0.5f, -0.5f),
+                ( 0.5f, -0.5f, -0.5f),
+                ( 0.5f, -0.5f,  0.5f),
+                ( 0.5f,  0.5f,  0.5f),
+
+                (-0.5f, -0.5f, -0.5f),
+                ( 0.5f, -0.5f, -0.5f),
+                ( 0.5f, -0.5f,  0.5f),
+                ( 0.5f, -0.5f,  0.5f),
+                (-0.5f, -0.5f,  0.5f),
+                (-0.5f, -0.5f, -0.5f),
+
+                (-0.5f,  0.5f, -0.5f),
+                ( 0.5f,  0.5f, -0.5f),
+                ( 0.5f,  0.5f,  0.5f),
+                ( 0.5f,  0.5f,  0.5f),
+                (-0.5f,  0.5f,  0.5f),
+                (-0.5f,  0.5f, -0.5f),
+            };
+
+            TexCoords = new Vector2[]
+            {
+                (0.0f, 0.0f),
+                (1.0f, 0.0f),
+                (1.0f, 1.0f),
+                (1.0f, 1.0f),
+                (0.0f, 1.0f),
+                (0.0f, 0.0f),
+                (0.0f, 0.0f),
+                (1.0f, 0.0f),
+                (1.0f, 1.0f),
+                (1.0f, 1.0f),
+                (0.0f, 1.0f),
+                (0.0f, 0.0f),
+                (1.0f, 0.0f),
+                (1.0f, 1.0f),
+                (0.0f, 1.0f),
+                (0.0f, 1.0f),
+                (0.0f, 0.0f),
+                (1.0f, 0.0f),
+                (1.0f, 0.0f),
+                (1.0f, 1.0f),
+                (0.0f, 1.0f),
+                (0.0f, 1.0f),
+                (0.0f, 0.0f),
+                (1.0f, 0.0f),
+                (0.0f, 1.0f),
+                (1.0f, 1.0f),
+                (1.0f, 0.0f),
+                (1.0f, 0.0f),
+                (0.0f, 0.0f),
+                (0.0f, 1.0f),
+                (0.0f, 1.0f),
+                (1.0f, 1.0f),
+                (1.0f, 0.0f),
+                (1.0f, 0.0f),
+                (0.0f, 0.0f),
+                (0.0f, 1.0f)
+            };
+
+            Indices = new uint[]
+            {
+            };
+
+            ColorMapPath = "container.jpg";
+        }
+
+        public void Draw2()
+        {
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+
+            ShaderProgram.Use();
+
+            int transLocation = GL.GetUniformLocation(ShaderProgram.Handle, "transform");
+            GL.UniformMatrix4(transLocation, true, ref trans);
+
+            GL.BindVertexArray(VertexArrayObject);
+
+            ColorMap.Use();
+
+            GL.DrawArrays(PrimitiveType.Triangles, 0, Verts.Length);
+        }
     }
 }

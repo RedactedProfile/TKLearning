@@ -14,14 +14,13 @@ namespace TkLearning
     {
         ImGuiController imGuiController;
         Primitives.Quad quad = new Primitives.Quad();
+        Primitives.Cube cube = new Primitives.Cube();
 
         static public void Main()
         {
-            using (Game game = new Game(800, 600, "Something"))
-            {
-                game.Run();
-            }
-            
+            using Game game = new Game(800, 600, "Something");
+            game.Run();
+
         }
 
         public Game(int width, int height, string title) : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = (width, height), Title = title, APIVersion = new Version(4, 6) }) { }
@@ -32,23 +31,27 @@ namespace TkLearning
 
             Title += ": OGL: " + GL.GetString(StringName.Version);
 
+            GL.Enable(EnableCap.DepthTest);
+
             imGuiController = new ImGuiController(ClientSize.X, ClientSize.Y);
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
             ///
             quad.Load();
+            cube.Load();
         }
 
-        protected override void OnRenderFrame(FrameEventArgs args)
+        protected override void OnRenderFrame(FrameEventArgs args) 
         {
             base.OnRenderFrame(args);
 
             imGuiController.Update(this, (float)args.Time);
 
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            quad.Draw();
+            //quad.Draw();
+            cube.Draw2();
 
             ImGui.ShowDemoWindow();
             imGuiController.Render();
@@ -64,6 +67,7 @@ namespace TkLearning
             base.OnUpdateFrame(e);
 
             quad.Update();
+            cube.Update();
 
             KeyboardState input = KeyboardState;
             if(input.IsKeyDown(Keys.Escape))
