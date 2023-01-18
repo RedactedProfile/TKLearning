@@ -46,7 +46,7 @@ namespace TkLearning
         {
             base.OnRenderFrame(args);
 
-            float time = (float)args.Time;
+            float Time = (float)args.Time;
 
             imGuiController.Update(this, (float)args.Time);
 
@@ -71,7 +71,7 @@ namespace TkLearning
             float Time = (float)e.Time;
 
             quad.Update(Time);
-            cube.Update();
+            cube.Update(Time);
 
 
             KeyboardState input = KeyboardState;

@@ -107,8 +107,10 @@ void main()
 
         public virtual void Update(float Time)
         {
-            
-            
+            rotation = rotation * (Matrix4.CreateRotationY(MathHelper.DegreesToRadians(0.5f)) * Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.5f)));
+            //scale = Matrix4.CreateScale(0.5f, 0.5f, 0.5f);
+            //trans += Matrix4.CreateTranslation(4.0f, 0.0f, 0.0f);
+            trans = rotation * scale;
         }
 
         public void Draw(float Time)
@@ -187,17 +189,17 @@ void main()
             ColorMapPath = "container.jpg";
         }
 
-        public override void Update(float Time)
-        {
-            base.Update(Time);
+        //public override void Update(float Time)
+        //{
+        //    base.Update(Time);
 
-            //Console.WriteLine(Time);
+        //    //Console.WriteLine(Time);
 
-            //rotation = rotation * (Matrix4.CreateRotationY(MathHelper.DegreesToRadians(0.5f)) * Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.5f)));
-            scale = Matrix4.CreateScale(0.5f, 0.5f, 0.5f);
-            position *= Matrix4.CreateTranslation(0.0005f, 0.0f, 0.0f);
-            //trans = ((rotation * scale) * Matrix4.CreateTranslation(0.5f, 0.0f, 0.0f) ) * Time;
-        }
+        //    //rotation = rotation * (Matrix4.CreateRotationY(MathHelper.DegreesToRadians(0.5f)) * Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.5f)));
+        //    scale = Matrix4.CreateScale(0.5f, 0.5f, 0.5f);
+        //    position *= Matrix4.CreateTranslation(0.0005f, 0.0f, 0.0f);
+        //    //trans = ((rotation * scale) * Matrix4.CreateTranslation(0.5f, 0.0f, 0.0f) ) * Time;
+        //}
     }
 
     public class Pyramid : Primitive
